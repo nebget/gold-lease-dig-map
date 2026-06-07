@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Operator Field Card</title>
+  <style>
+    @page { size: letter; margin: 0.3in; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #171b15; background: white; }
+    .page { width: 8in; min-height: 10in; margin: 0 auto; padding: 0.05in; }
+    .top { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 8px; align-items: stretch; }
+    h1 { margin: 0; font-size: 30px; line-height: 1.02; letter-spacing: 0; }
+    h2 { margin: 10px 0 5px; font-size: 12px; text-transform: uppercase; letter-spacing: 0; border-bottom: 2px solid #222; padding-bottom: 2px; }
+    p, li { font-size: 12.5px; line-height: 1.24; margin: 0 0 3px; }
+    ul { margin: 0; padding-left: 16px; }
+    .lead { background: #fff0bd; border-left: 7px solid #f1b51c; padding: 9px 10px; font-size: 15px; line-height: 1.22; }
+    .quick { border: 2px solid #222; padding: 8px; background: #f7f7f1; }
+    .quick p { font-size: 12.5px; margin-bottom: 5px; }
+    .map { width: 100%; border: 2px solid #222; margin: 8px 0 8px; display: block; }
+    strong { font-weight: 800; }
+    @media print { .page { width: auto; min-height: auto; padding: 0; } }
+  </style>
+</head>
+<body>
+  <section class="page">
+    <div class="top">
+      <div>
+        <h1>Where To Dig</h1>
+        <div class="lead"><strong>Start in the yellow area.</strong> Make one narrow cut. If it pays, widen there. If it is weak, move to orange. Leave red alone.</div>
+      </div>
+      <div class="quick">
+        <p><strong>Yellow:</strong> first cut</p>
+        <p><strong>Orange:</strong> next cut</p>
+        <p><strong>Pale yellow:</strong> last test</p>
+        <p><strong>Red:</strong> do not dig</p>
+      </div>
+    </div>
+    <img class="map" src="map_preview.png" alt="Gold lease field plan map">
+  </section>
+</body>
+</html>

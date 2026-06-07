@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+<name>Gold Lease Field Plan</name>
+<Style id="access">
+<LineStyle><color>ffffffff</color><width>3</width></LineStyle>
+<PolyStyle><color>ffffffff</color></PolyStyle>
+<IconStyle><color>ffffffff</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="avoid">
+<LineStyle><color>ff2832b7</color><width>3</width></LineStyle>
+<PolyStyle><color>662832b7</color></PolyStyle>
+<IconStyle><color>ff2832b7</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="avoid_wet">
+<LineStyle><color>ff19217d</color><width>3</width></LineStyle>
+<PolyStyle><color>4419217d</color></PolyStyle>
+<IconStyle><color>ff19217d</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="dig_first">
+<LineStyle><color>ff1cb5f1</color><width>3</width></LineStyle>
+<PolyStyle><color>991cb5f1</color></PolyStyle>
+<IconStyle><color>ff1cb5f1</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="dig_second">
+<LineStyle><color>ff2488f6</color><width>3</width></LineStyle>
+<PolyStyle><color>882488f6</color></PolyStyle>
+<IconStyle><color>ff2488f6</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="dig_third">
+<LineStyle><color>ff8fecff</color><width>3</width></LineStyle>
+<PolyStyle><color>778fecff</color></PolyStyle>
+<IconStyle><color>ff8fecff</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="drainage">
+<LineStyle><color>ffff7800</color><width>3</width></LineStyle>
+<PolyStyle><color>ffff7800</color></PolyStyle>
+<IconStyle><color>ffff7800</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="lease">
+<LineStyle><color>ff00e0ff</color><width>3</width></LineStyle>
+<PolyStyle><color>2000e0ff</color></PolyStyle>
+<IconStyle><color>ff00e0ff</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="old_channel">
+<LineStyle><color>ffd7bf00</color><width>3</width></LineStyle>
+<PolyStyle><color>eed7bf00</color></PolyStyle>
+<IconStyle><color>ffd7bf00</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="stage">
+<LineStyle><color>ffff8c48</color><width>3</width></LineStyle>
+<PolyStyle><color>88ff8c48</color></PolyStyle>
+<IconStyle><color>ffff8c48</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="stage_point">
+<LineStyle><color>ffff8c48</color><width>3</width></LineStyle>
+<PolyStyle><color>ffff8c48</color></PolyStyle>
+<IconStyle><color>ffff8c48</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="tailings">
+<LineStyle><color>ff486884</color><width>3</width></LineStyle>
+<PolyStyle><color>88486884</color></PolyStyle>
+<IconStyle><color>ff486884</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="water">
+<LineStyle><color>ffff5500</color><width>3</width></LineStyle>
+<PolyStyle><color>ffff5500</color></PolyStyle>
+<IconStyle><color>ffff5500</color><scale>1.1</scale></IconStyle>
+</Style>
+<Style id="water_point">
+<LineStyle><color>ffff5500</color><width>3</width></LineStyle>
+<PolyStyle><color>ffff5500</color></PolyStyle>
+<IconStyle><color>ffff5500</color><scale>1.1</scale></IconStyle>
+</Style>
+<Placemark>
+<name>Lease boundary</name>
+<description></description>
+<styleUrl>#lease</styleUrl>
+<Polygon><outerBoundaryIs><LinearRing>
+<coordinates>34.96008333,10.21627778,0 34.96255556,10.21658333,0 34.96280556,10.21780556,0 34.96227778,10.21836111,0 34.95994444,10.21813889,0 34.96008333,10.21627778,0</coordinates>
+</LinearRing></outerBoundaryIs></Polygon>
+</Placemark>
+<Placemark>
+<name>Visible seasonal drainage / active low strip</name>
+<description>Walk it first. Dig the edges and bottom contact, not the soft wet channel center.</description>
+<styleUrl>#drainage</styleUrl>
+<LineString>
+<coordinates>34.95870000,10.21608000,0 34.95925000,10.21642000,0 34.95990000,10.21670000,0 34.96065000,10.21685000,0 34.96135000,10.21686000,0 34.96205000,10.21674000,0 34.96262000,10.21656000,0 34.96318000,10.21622000,0</coordinates>
+</LineString>
+</Placemark>
+<Placemark>
+<name>Possible overflow swale / old channel edge</name>
+<description>Test only after the active low-strip targets are compared.</description>
+<styleUrl>#old_channel</styleUrl>
+<LineString>
+<coordinates>34.95934000,10.21722000,0 34.96005000,10.21727000,0 34.96076000,10.21723000,0 34.96145000,10.21716000,0 34.96214000,10.21702000,0</coordinates>
+</LineString>
+</Placemark>
+<Placemark>
+<name>DIG FIRST - southeast channel-edge trap</name>
+<description>Open narrow cross-cuts from the dry edge toward the channel. Pan bottom gravel, black sand, clay contact, and cracks separately.</description>
+<styleUrl>#dig_first</styleUrl>
+<Polygon><outerBoundaryIs><LinearRing>
+<coordinates>34.96162000,10.21658000,0 34.96247000,10.21658000,0 34.96262000,10.21704000,0 34.96214000,10.21725000,0 34.96152000,10.21712000,0 34.96162000,10.21658000,0</coordinates>
+</LinearRing></outerBoundaryIs></Polygon>
+</Placemark>
+<Placemark>
+<name>DIG SECOND - central/west swale edge</name>
+<description>Move here only after the first zone gives color. Keep the same bucket-count test so the comparison is fair.</description>
+<styleUrl>#dig_second</styleUrl>
+<Polygon><outerBoundaryIs><LinearRing>
+<coordinates>34.96008000,10.21662000,0 34.96102000,10.21672000,0 34.96135000,10.21716000,0 34.96066000,10.21738000,0 34.96004000,10.21720000,0 34.96008000,10.21662000,0</coordinates>
+</LinearRing></outerBoundaryIs></Polygon>
+</Placemark>
+<Placemark>
+<name>DIG THIRD - possible old terrace lens</name>
+<description>Make one trench to clay/hardpan. Abandon fast if it is fine soil with no rounded gravel or black sand.</description>
+<styleUrl>#dig_third</styleUrl>
+<Polygon><outerBoundaryIs><LinearRing>
+<coordinates>34.96042000,10.21748000,0 34.96136000,10.21750000,0 34.96154000,10.21794000,0 34.96056000,10.21808000,0 34.96012000,10.21782000,0 34.96042000,10.21748000,0</coordinates>
+</LinearRing></outerBoundaryIs></Polygon>
+</Placemark>
+<Placemark>
+<name>AVOID - dry high overburden unless panning proves it</name>
+<description>Do not spend excavator hours here until the three priority zones are tested.</description>
+<styleUrl>#avoid</styleUrl>
+<Polygon><outerBoundaryIs><LinearRing>
+<coordinates>34.96120000,10.21802000,0 34.96220000,10.21828000,0 34.96255000,10.21800000,0 34.96220000,10.21776000,0 34.96158000,10.21788000,0 34.96120000,10.21802000,0</coordinates>
+</LinearRing></outerBoundaryIs></Polygon>
+</Placemark>
+<Placemark>
+<name>AVOID - wet/loose channel center</name>
+<description>Dig the edges and bottom contact. Do not dump tailings into this line.</description>
+<styleUrl>#avoid_wet</styleUrl>
+<Polygon><outerBoundaryIs><LinearRing>
+<coordinates>34.95920000,10.21634000,0 34.96012000,10.21645000,0 34.96128000,10.21652000,0 34.96236000,10.21642000,0 34.96250000,10.21667000,0 34.96135000,10.21683000,0 34.96026000,10.21678000,0 34.95922000,10.21658000,0 34.95920000,10.21634000,0</coordinates>
+</LinearRing></outerBoundaryIs></Polygon>
+</Placemark>
+<Placemark>
+<name>Wash plant staging pad</name>
+<description>Place plant on compact dry ground. Keep the pump line short and keep equipment out of soft bank material.</description>
+<styleUrl>#stage</styleUrl>
+<Polygon><outerBoundaryIs><LinearRing>
+<coordinates>34.96218000,10.21719000,0 34.96260000,10.21723000,0 34.96262000,10.21754000,0 34.96224000,10.21758000,0 34.96218000,10.21719000,0</coordinates>
+</LinearRing></outerBoundaryIs></Polygon>
+</Placemark>
+<Placemark>
+<name>Settling / tailings area</name>
+<description>Build two settling cells with a berm. Return only clear water; do not let fines run back into the channel.</description>
+<styleUrl>#tailings</styleUrl>
+<Polygon><outerBoundaryIs><LinearRing>
+<coordinates>34.96174000,10.21778000,0 34.96230000,10.21782000,0 34.96218000,10.21814000,0 34.96158000,10.21810000,0 34.96174000,10.21778000,0</coordinates>
+</LinearRing></outerBoundaryIs></Polygon>
+</Placemark>
+<Placemark>
+<name>Excavator access path</name>
+<description>Walk it for soft ground before moving the excavator. Avoid crossing the wet channel unless a stable crossing is made.</description>
+<styleUrl>#access</styleUrl>
+<LineString>
+<coordinates>34.96345000,10.21774000,0 34.96272000,10.21755000,0 34.96242000,10.21738000,0 34.96218000,10.21714000,0 34.96195000,10.21691000,0 34.96120000,10.21704000,0 34.96048000,10.21705000,0</coordinates>
+</LineString>
+</Placemark>
+<Placemark>
+<name>Water handling: pump to plant, settle before return</name>
+<description>Pump from the channel/pond only after confirming water is present. Use settling cells before any water returns.</description>
+<styleUrl>#water</styleUrl>
+<LineString>
+<coordinates>34.96208000,10.21676000,0 34.96234000,10.21708000,0 34.96241000,10.21735000,0 34.96205000,10.21788000,0</coordinates>
+</LineString>
+</Placemark>
+<Placemark>
+<name>Water intake check</name>
+<description>Check actual flow/depth tomorrow morning.</description>
+<styleUrl>#water_point</styleUrl>
+<Point>
+<coordinates>34.96208000,10.21676000,0</coordinates>
+</Point>
+</Placemark>
+<Placemark>
+<name>Wash plant position</name>
+<description>Stage here if ground is compact and above the wet channel.</description>
+<styleUrl>#stage_point</styleUrl>
+<Point>
+<coordinates>34.96242000,10.21738000,0</coordinates>
+</Point>
+</Placemark>
+</Document>
+</kml>

@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gold Lease Dig Plan</title>
+  <link rel="stylesheet" href="assets/leaflet.css">
+  <style>
+    :root {
+      --ink: #182016;
+      --muted: #5f675c;
+      --paper: #fffaf0;
+      --line: rgba(24,32,22,0.16);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: #ede8dc; }
+    .layout { min-height: 100vh; display: grid; grid-template-columns: minmax(360px, 29vw) minmax(0, 1fr); }
+    aside { background: var(--paper); border-right: 1px solid var(--line); padding: 18px; overflow-y: auto; max-height: 100vh; }
+    h1 { margin: 0 0 8px; font-size: 25px; line-height: 1.08; letter-spacing: 0; }
+    h2 { margin: 20px 0 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0; }
+    p, li { font-size: 14px; line-height: 1.45; }
+    ol, ul { padding-left: 21px; }
+    .callout { border-left: 5px solid #f1b51c; background: #fff1c9; padding: 11px 12px; border-radius: 0 8px 8px 0; margin: 14px 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0; }
+    .metric { background: #fffdf7; border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; }
+    .metric strong { display: block; font-size: 18px; }
+    .metric span, .small { color: var(--muted); font-size: 12px; }
+    .legend { display: grid; grid-template-columns: 16px 1fr; gap: 8px 10px; align-items: center; font-size: 13px; }
+    .swatch { width: 16px; height: 16px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.22); }
+    #map { height: 100vh; width: 100%; }
+    .leaflet-control-layers { font-size: 13px; }
+    .leaflet-popup-content { min-width: 235px; }
+    .popup-title { font-weight: 800; margin-bottom: 6px; }
+    .popup-meta { font-size: 12px; color: #596058; margin-bottom: 8px; }
+    .popup-action { border-left: 4px solid #f1b51c; padding-left: 8px; }
+    .locate-btn { width: 100%; border: 0; border-radius: 8px; background: #182016; color: #fff; padding: 11px 12px; font-size: 15px; font-weight: 800; cursor: pointer; margin: 8px 0 6px; }
+    .locate-status { min-height: 18px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } aside { max-height: none; border-right: 0; border-bottom: 1px solid var(--line); } #map { height: 70vh; } }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <h1>Gold Lease Dig Plan</h1>
+      <p class="small">Coordinate interpretation checked: 10.x is latitude and 34.x is longitude, placing the lease in western Ethiopia. Reversing the numbers does not fit Ethiopia.</p>
+      <div class="callout"><strong>Do this first:</strong> put the excavator on the southeast channel-edge trap, open narrow test cuts to the bottom contact, pan by layer, and only widen if the bottom gravel beats the current river-side grade.</div>
+      <button class="locate-btn" id="locateBtn" type="button">Show my location</button>
+      <div class="locate-status" id="locateStatus">For phone GPS, open this map from an HTTPS link.</div>
+      <div class="grid">
+        <div class="metric"><strong>5.86 ha</strong><span>lease area</span></div>
+        <div class="metric"><strong>960 m</strong><span>boundary</span></div>
+        <div class="metric"><strong>92&deg; E</strong><span>SRTM fall</span></div>
+        <div class="metric"><strong>47 m east of boundary</strong><span>mapped road/track</span></div>
+      </div>
+      <h2>Dig Sequence</h2>
+      <ol>
+        <li><strong>First:</strong> southeast channel-edge trap near the access road and wash plant pad.</li>
+        <li><strong>Second:</strong> central/west swale edge if the first zone shows black sand, coarse rounded gravel, or visible color at bottom.</li>
+        <li><strong>Third:</strong> old terrace lens only as a test trench. Quit fast if it is dry fine soil without rounded gravel.</li>
+      </ol>
+      <h2>Move / Stop Rules</h2>
+      <ul>
+        <li><strong>Expand</strong> when gold sits on clay/hardpan/bedrock cracks with black sand and coarse gravel.</li>
+        <li><strong>Move</strong> when gold is only fine surface color and the bottom contact is barren.</li>
+        <li><strong>Stop</strong> when the cut turns to loose recent sand, wet collapsing bank, thick roots, or deep overburden with no gravel lens.</li>
+      </ul>
+      <h2>Legend</h2>
+      <div class="legend">
+        <span class="swatch" style="background:#f1b51c;"></span><span>Dig first</span>
+        <span class="swatch" style="background:#f68824;"></span><span>Dig second</span>
+        <span class="swatch" style="background:#ffec8f;"></span><span>Dig third</span>
+        <span class="swatch" style="background:#b73228;"></span><span>Avoid / low priority</span>
+        <span class="swatch" style="background:#488cff;"></span><span>Wash plant / water handling</span>
+        <span class="swatch" style="background:#0078ff;"></span><span>Visible drainage / swale</span>
+        <span class="swatch" style="background:#ffffff;"></span><span>Access path</span>
+      </div>
+      <h2>Data Limits</h2>
+      <p class="small">OSM mapped stream: 1952 m from lease center. The channel shown here is from imagery and terrain inference, not a surveyed hydrology layer. Public data cannot prove gold grade, depth to clay/bedrock, or tomorrow's water level.</p>
+    </aside>
+    <main id="map"></main>
+  </div>
+  <script src="assets/leaflet.js"></script>
+  <script>
+    const data = {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"name": "Lease boundary", "class": "lease", "confidence": "High"}, "geometry": {"type": "Polygon", "coordinates": [[[34.96008333333334, 10.216277777777776], [34.96255555555556, 10.216583333333332], [34.96280555555556, 10.217805555555556], [34.96227777777778, 10.218361111111111], [34.959944444444446, 10.21813888888889], [34.96008333333334, 10.216277777777776]]]}}, {"type": "Feature", "properties": {"name": "Visible seasonal drainage / active low strip", "class": "drainage", "confidence": "Medium", "why": "High-resolution imagery shows a green, low, wet-looking belt along the southern half of the lease. OSM does not map it, so treat it as a seasonal swale/channel until checked on foot.", "field_action": "Walk it first. Dig the edges and bottom contact, not the soft wet channel center."}, "geometry": {"type": "LineString", "coordinates": [[34.9587, 10.21608], [34.95925, 10.21642], [34.9599, 10.2167], [34.96065, 10.21685], [34.96135, 10.21686], [34.96205, 10.21674], [34.96262, 10.21656], [34.96318, 10.21622]]}}, {"type": "Feature", "properties": {"name": "Possible overflow swale / old channel edge", "class": "old_channel", "confidence": "Low-Medium", "why": "Curving vegetation and lighter patches suggest an old flood path or reworked terrace inside the lease.", "field_action": "Test only after the active low-strip targets are compared."}, "geometry": {"type": "LineString", "coordinates": [[34.95934, 10.21722], [34.96005, 10.21727], [34.96076, 10.21723], [34.96145, 10.21716], [34.96214, 10.21702]]}}, {"type": "Feature", "properties": {"name": "DIG FIRST - southeast channel-edge trap", "class": "dig_first", "priority": "1", "confidence": "Medium", "why": "Best combination of visible drainage, lower ground, nearby bend/constriction, road access, and short haul to the wash plant.", "field_action": "Open narrow cross-cuts from the dry edge toward the channel. Pan bottom gravel, black sand, clay contact, and cracks separately."}, "geometry": {"type": "Polygon", "coordinates": [[[34.96162, 10.21658], [34.96247, 10.21658], [34.96262, 10.21704], [34.96214, 10.21725], [34.96152, 10.21712], [34.96162, 10.21658]]]}}, {"type": "Feature", "properties": {"name": "DIG SECOND - central/west swale edge", "class": "dig_second", "priority": "2", "confidence": "Medium", "why": "Likely continuation of the same low-energy swale. It can hold a second pay streak if coarse gravel or hardpan appears under the vegetation line.", "field_action": "Move here only after the first zone gives color. Keep the same bucket-count test so the comparison is fair."}, "geometry": {"type": "Polygon", "coordinates": [[[34.96008, 10.21662], [34.96102, 10.21672], [34.96135, 10.21716], [34.96066, 10.21738], [34.96004, 10.2172], [34.96008, 10.21662]]]}}, {"type": "Feature", "properties": {"name": "DIG THIRD - possible old terrace lens", "class": "dig_third", "priority": "3", "confidence": "Low-Medium", "why": "Paler, slightly higher ground may be old flood gravel or may just be dry overburden. It is a test target, not a production target yet.", "field_action": "Make one trench to clay/hardpan. Abandon fast if it is fine soil with no rounded gravel or black sand."}, "geometry": {"type": "Polygon", "coordinates": [[[34.96042, 10.21748], [34.96136, 10.2175], [34.96154, 10.21794], [34.96056, 10.21808], [34.96012, 10.21782], [34.96042, 10.21748]]]}}, {"type": "Feature", "properties": {"name": "AVOID - dry high overburden unless panning proves it", "class": "avoid", "confidence": "Medium", "why": "Less visible channel evidence. Likely higher/drier pasture and overburden relative to the drainage trap.", "field_action": "Do not spend excavator hours here until the three priority zones are tested."}, "geometry": {"type": "Polygon", "coordinates": [[[34.9612, 10.21802], [34.9622, 10.21828], [34.96255, 10.218], [34.9622, 10.21776], [34.96158, 10.21788], [34.9612, 10.21802]]]}}, {"type": "Feature", "properties": {"name": "AVOID - wet/loose channel center", "class": "avoid_wet", "confidence": "Medium", "why": "Loose recent sand and thick vegetation are poor places to widen blindly and are higher flood/instability risk.", "field_action": "Dig the edges and bottom contact. Do not dump tailings into this line."}, "geometry": {"type": "Polygon", "coordinates": [[[34.9592, 10.21634], [34.96012, 10.21645], [34.96128, 10.21652], [34.96236, 10.21642], [34.9625, 10.21667], [34.96135, 10.21683], [34.96026, 10.21678], [34.95922, 10.21658], [34.9592, 10.21634]]]}}, {"type": "Feature", "properties": {"name": "Wash plant staging pad", "class": "stage", "confidence": "Medium", "why": "Close to the east road/track and close to the first dig, but set back from the wet channel center.", "field_action": "Place plant on compact dry ground. Keep the pump line short and keep equipment out of soft bank material."}, "geometry": {"type": "Polygon", "coordinates": [[[34.96218, 10.21719], [34.9626, 10.21723], [34.96262, 10.21754], [34.96224, 10.21758], [34.96218, 10.21719]]]}}, {"type": "Feature", "properties": {"name": "Settling / tailings area", "class": "tailings", "confidence": "Low-Medium", "why": "Use this dry, low-priority area for bermed settling if it proves stable on foot. Do not sacrifice a proven pay streak for tailings.", "field_action": "Build two settling cells with a berm. Return only clear water; do not let fines run back into the channel."}, "geometry": {"type": "Polygon", "coordinates": [[[34.96174, 10.21778], [34.9623, 10.21782], [34.96218, 10.21814], [34.96158, 10.2181], [34.96174, 10.21778]]]}}, {"type": "Feature", "properties": {"name": "Excavator access path", "class": "access", "confidence": "Medium", "why": "Uses the visible road/track east of the lease and keeps the first moves short.", "field_action": "Walk it for soft ground before moving the excavator. Avoid crossing the wet channel unless a stable crossing is made."}, "geometry": {"type": "LineString", "coordinates": [[34.96345, 10.21774], [34.96272, 10.21755], [34.96242, 10.21738], [34.96218, 10.21714], [34.96195, 10.21691], [34.9612, 10.21704], [34.96048, 10.21705]]}}, {"type": "Feature", "properties": {"name": "Water handling: pump to plant, settle before return", "class": "water", "confidence": "Medium", "field_action": "Pump from the channel/pond only after confirming water is present. Use settling cells before any water returns."}, "geometry": {"type": "LineString", "coordinates": [[34.96208, 10.21676], [34.96234, 10.21708], [34.96241, 10.21735], [34.96205, 10.21788]]}}, {"type": "Feature", "properties": {"name": "Water intake check", "class": "water_point", "confidence": "Low-Medium", "field_action": "Check actual flow/depth tomorrow morning."}, "geometry": {"type": "Point", "coordinates": [34.96208, 10.21676]}}, {"type": "Feature", "properties": {"name": "Wash plant position", "class": "stage_point", "confidence": "Medium", "field_action": "Stage here if ground is compact and above the wet channel."}, "geometry": {"type": "Point", "coordinates": [34.96242, 10.21738]}}, {"type": "Feature", "properties": {"name": "Corner 1", "class": "corner", "coordinate": "10 deg 12' 58.6\" N, 34 deg 57' 36.3\" E", "confidence": "High"}, "geometry": {"type": "Point", "coordinates": [34.96008333333334, 10.216277777777776]}}, {"type": "Feature", "properties": {"name": "Corner 2", "class": "corner", "coordinate": "10 deg 12' 59.7\" N, 34 deg 57' 45.2\" E", "confidence": "High"}, "geometry": {"type": "Point", "coordinates": [34.96255555555556, 10.216583333333332]}}, {"type": "Feature", "properties": {"name": "Corner 3", "class": "corner", "coordinate": "10 deg 13' 04.1\" N, 34 deg 57' 46.1\" E", "confidence": "High"}, "geometry": {"type": "Point", "coordinates": [34.96280555555556, 10.217805555555556]}}, {"type": "Feature", "properties": {"name": "Corner 4", "class": "corner", "coordinate": "10 deg 13' 06.1\" N, 34 deg 57' 44.2\" E", "confidence": "High"}, "geometry": {"type": "Point", "coordinates": [34.96227777777778, 10.218361111111111]}}, {"type": "Feature", "properties": {"name": "Corner 5", "class": "corner", "coordinate": "10 deg 13' 05.3\" N, 34 deg 57' 35.8\" E", "confidence": "High"}, "geometry": {"type": "Point", "coordinates": [34.959944444444446, 10.21813888888889]}}, {"type": "Feature", "properties": {"name": "OSM mapped tertiary road/track", "class": "osm_road", "kind": "tertiary"}, "geometry": {"type": "LineString", "coordinates": [[34.9627666, 10.223703], [34.9626065, 10.2244374], [34.9619075, 10.2243209], [34.9611474, 10.2243059], [34.9601582, 10.2242833], [34.959696, 10.2242608], [34.9590123, 10.2243735], [34.9583248, 10.2244788], [34.9577747, 10.2246818], [34.9570452, 10.2248058], [34.9564952, 10.2250313], [34.9560292, 10.2251704], [34.9554715, 10.225505], [34.954551, 10.2256102], [34.9534166, 10.2259711], [34.952687, 10.2261966], [34.9516023, 10.2267792], [34.9511745, 10.226971], [34.9505328, 10.2271664], [34.9502387, 10.2273431], [34.9495779, 10.2279332], [34.9482601, 10.2289444], [34.947649, 10.2292188], [34.9463847, 10.2299029], [34.9458079, 10.2300871], [34.9454527, 10.2301247], [34.9446239, 10.2301021], [34.9442343, 10.2299856], [34.9439631, 10.2299142], [34.9433787, 10.229963], [34.943161, 10.2299029], [34.9426682, 10.22973], [34.942439, 10.2297375], [34.9421335, 10.2298728], [34.940873, 10.2301472], [34.9396966, 10.2303276], [34.9395209, 10.2303915], [34.9392268, 10.2305344], [34.9388104, 10.2306472], [34.9386576, 10.2307374], [34.9379625, 10.2312711], [34.9375767, 10.231632], [34.9371604, 10.2321206], [34.9367593, 10.2326243], [34.9366218, 10.2329175], [34.9364346, 10.2330641], [34.9362055, 10.2331919], [34.9360985, 10.2333347], [34.9360603, 10.2336129], [34.9362437, 10.2341692], [34.9363009, 10.2344473], [34.936385, 10.2346691], [34.936427, 10.2351578], [34.9363697, 10.235372], [34.9359763, 10.2357705], [34.9358082, 10.2358644], [34.9354606, 10.2359772], [34.9351207, 10.2361426], [34.9349412, 10.2361877], [34.934754, 10.2361163], [34.9342002, 10.2358419], [34.9335126, 10.2357329], [34.9332644, 10.2357592], [34.9330352, 10.2358682], [34.9324852, 10.2363719], [34.9321758, 10.2365636], [34.9319199, 10.2366387], [34.9312973, 10.2365448], [34.9309802, 10.2365861], [34.9306556, 10.2366688], [34.9303653, 10.2366275], [34.9298878, 10.2362816], [34.9297045, 10.2360261], [34.9295632, 10.2352555], [34.92946, 10.2350337], [34.9292691, 10.2349285], [34.9290552, 10.2349022], [34.9288527, 10.2349473], [34.9285854, 10.2350901], [34.9274357, 10.2362177], [34.9273784, 10.2367741], [34.9273058, 10.2369733], [34.9271492, 10.2370484], [34.9269162, 10.2370184], [34.9266488, 10.2368455], [34.9264349, 10.2367853], [34.9262057, 10.2368793], [34.9259957, 10.2370823], [34.9257703, 10.2377025], [34.9256022, 10.2378641], [34.925354, 10.2378378], [34.9250331, 10.2376762], [34.9244373, 10.2371011], [34.9240935, 10.2369094], [34.923914, 10.2368342], [34.9235893, 10.236853], [34.9231348, 10.2370597], [34.9228407, 10.2373266], [34.9223861, 10.2378453], [34.9220309, 10.2383565], [34.9217408, 10.2386471], [34.9213, 10.2389752], [34.9207971, 10.2393514], [34.9206728, 10.2395183], [34.9203696, 10.2400687], [34.9202321, 10.2402003], [34.9200644, 10.2402282], [34.9195465, 10.2400873], [34.9191905, 10.2400243], [34.9187234, 10.2399019], [34.918277, 10.2398667], [34.9175726, 10.2399371], [34.9171431, 10.240002], [34.9158623, 10.2401132], [34.9156514, 10.2400817], [34.9152502, 10.2399612], [34.9150204, 10.2399371], [34.9147435, 10.239989], [34.9144007, 10.2401244], [34.9141747, 10.240243], [34.9138696, 10.2404543], [34.9131991, 10.240762], [34.9130051, 10.2408917], [34.9126736, 10.2410733], [34.9124927, 10.2411827], [34.9122969, 10.2413477], [34.9120991, 10.2415775], [34.9113148, 10.2424527], [34.9107286, 10.2428642], [34.9104334, 10.2432595], [34.9098964, 10.2441632], [34.9097119, 10.244494], [34.9092815, 10.2449135], [34.9090765, 10.2452201], [34.9086215, 10.2460027], [34.9085313, 10.2462609], [34.908519, 10.2467087], [34.908478, 10.24758], [34.9083878, 10.2478745], [34.9080517, 10.2485805], [34.9079287, 10.2490202], [34.9078467, 10.2498512], [34.9079731, 10.2505624], [34.9079676, 10.2506056], [34.9079155, 10.25101], [34.9078925, 10.2516049], [34.907786, 10.2521176], [34.9077428, 10.252551], [34.9076737, 10.2528059], [34.9075384, 10.2530071], [34.9073509, 10.2531251], [34.906955, 10.2532388], [34.9064561, 10.2534552], [34.9059197, 10.2539197], [34.9056461, 10.2544661], [34.9054127, 10.2552051], [34.9052947, 10.2557963], [34.9052169, 10.2564878], [34.9051284, 10.2568441], [34.9050399, 10.2572823], [34.9050587, 10.2577178], [34.9050599, 10.2580112], [34.9050069, 10.2582853], [34.9049041, 10.25853], [34.9048079, 10.2586247], [34.9043901, 10.2587062], [34.9041806, 10.2586929], [34.9040917, 10.2586769], [34.9039988, 10.2585986], [34.9038151, 10.2583581], [34.9033816, 10.2577975], [34.9028705, 10.257608], [34.9023722, 10.2575652], [34.9017761, 10.2575814], [34.9013239, 10.2575571], [34.9010239, 10.2576097], [34.9006333, 10.2578524], [34.900136, 10.2579321], [34.8997948, 10.257994], [34.8987943, 10.2580472], [34.8980587, 10.258191], [34.8973787, 10.2582833], [34.8968695, 10.2582691], [34.8965596, 10.2583095], [34.8960255, 10.2585081], [34.8953601, 10.2587658], [34.8947057, 10.2588677], [34.8942819, 10.2589903], [34.8939181, 10.259163], [34.8932463, 10.2596161], [34.8924776, 10.2602107], [34.8921529, 10.2605505], [34.8915483, 10.2609262], [34.8913369, 10.2609961], [34.8908827, 10.2610318], [34.8902578, 10.2609145], [34.8899837, 10.2609193], [34.8896618, 10.2609347], [34.8892487, 10.2610007], [34.8885437, 10.2609347], [34.8880586, 10.2609064], [34.8875201, 10.2609995], [34.8871789, 10.2610075], [34.8869877, 10.2609466], [34.8867349, 10.260866], [34.8857853, 10.2605869], [34.8853365, 10.2606238], [34.8845375, 10.2609267], [34.8839827, 10.2608879], [34.8838321, 10.2608294], [34.8838341, 10.2606944], [34.883938, 10.2604033], [34.8839153, 10.2602113], [34.8837581, 10.2601662], [34.8833256, 10.2604347], [34.8829852, 10.2604369], [34.8823282, 10.2601628], [34.8816144, 10.2601157], [34.8811471, 10.2599187], [34.880769, 10.2598803], [34.880486, 10.2597304], [34.8797513, 10.259513], [34.879581, 10.2595128], [34.8794051, 10.2597531], [34.879206, 10.2597601], [34.878682, 10.2594766], [34.8785477, 10.2594204], [34.8782694, 10.2594379], [34.8781711, 10.2596506], [34.8779746, 10.2599728], [34.8776471, 10.2603144], [34.8773917, 10.2603595], [34.8770904, 10.2601275], [34.8764223, 10.2595668], [34.8759835, 10.2590447], [34.8757346, 10.2589996], [34.8753823, 10.2591611], [34.8748884, 10.2596962], [34.8745891, 10.2598379], [34.8744382, 10.2597885], [34.874237, 10.2596169], [34.8740677, 10.2593339], [34.8738352, 10.2588514], [34.8737383, 10.2587832], [34.8736744, 10.2587382], [34.8731213, 10.2583487], [34.8722816, 10.2576739], [34.8720738, 10.2575265], [34.8718612, 10.2574335], [34.8711825, 10.2571821], [34.8705407, 10.2570468], [34.8698922, 10.2568019], [34.8696237, 10.2564796], [34.8694141, 10.2558158], [34.8692831, 10.2554097], [34.8690211, 10.2552615], [34.8687198, 10.2552615], [34.8683007, 10.2553904], [34.8676326, 10.255674], [34.8665519, 10.2562025], [34.8658576, 10.2565183], [34.8648751, 10.2569694], [34.8646197, 10.2568857], [34.8635831, 10.2567675], [34.8633021, 10.2567025], [34.8631318, 10.2566229], [34.8629891, 10.2565391], [34.8627656, 10.2564595], [34.8626549, 10.2563946], [34.8625676, 10.2562919], [34.8624676, 10.2561495], [34.8623824, 10.256072], [34.8623271, 10.2560489], [34.8622696, 10.256051], [34.8622334, 10.2560783], [34.8621941, 10.2561385], [34.8620304, 10.2566215], [34.8618172, 10.2571164], [34.861781, 10.2572074], [34.8617662, 10.2572774], [34.8617609, 10.257412], [34.8617475, 10.257507], [34.8617233, 10.2575716], [34.8616697, 10.257664], [34.8615986, 10.2577379], [34.8615409, 10.257759], [34.8614833, 10.257763], [34.8614323, 10.2577379], [34.8613814, 10.2576904], [34.8613143, 10.2576257], [34.8612432, 10.2575809], [34.8611534, 10.2575532], [34.861089, 10.2575611], [34.8610488, 10.2575954], [34.8610058, 10.2576587], [34.8609415, 10.2577683], [34.8609012, 10.2578224], [34.8608436, 10.2578633], [34.8607685, 10.257895], [34.8606947, 10.2579055], [34.860629, 10.2579029], [34.8605485, 10.257891], [34.8604372, 10.2578593], [34.8603205, 10.2578303], [34.8602656, 10.257796], [34.8601904, 10.2577353], [34.8601006, 10.2576469], [34.8599263, 10.2575043], [34.8597729, 10.2573948], [34.8596513, 10.2573605], [34.8595467, 10.2572998], [34.8594582, 10.2572101], [34.8593456, 10.2570834], [34.8592007, 10.2569197], [34.8591149, 10.2568036], [34.8590559, 10.2566743], [34.8589566, 10.2564842], [34.8587903, 10.2562467], [34.8586616, 10.2560804], [34.8585543, 10.2559933], [34.8584256, 10.25593], [34.8582754, 10.2559089], [34.8581538, 10.255896], [34.8573953, 10.2560285], [34.8571726, 10.2559769], [34.8568648, 10.2554226], [34.8564325, 10.2548748], [34.8561574, 10.2547137], [34.8555941, 10.2545461], [34.8550767, 10.2549586], [34.8545069, 10.2550295], [34.8535768, 10.2550295], [34.852542, 10.2553517], [34.8516512, 10.2555129], [34.8511487, 10.255502], [34.8510552, 10.2555], [34.849895, 10.255579], [34.8496095, 10.255429], [34.8493135, 10.2551988], [34.8491714, 10.2551249], [34.8489648, 10.255059], [34.8488281, 10.2550484], [34.8485142, 10.2551038], [34.8482648, 10.2551144], [34.848128, 10.2551619]]}}, {"type": "Feature", "properties": {"name": "OSM mapped stream", "class": "osm_stream", "kind": "stream"}, "geometry": {"type": "LineString", "coordinates": [[34.9753833, 10.2063696], [34.9758553, 10.206792], [34.9762845, 10.2067497], [34.9763274, 10.2060951], [34.976263, 10.205546], [34.9765205, 10.2047224], [34.9774861, 10.2040888], [34.9777007, 10.2036031], [34.9777007, 10.2029485], [34.9777651, 10.2024205], [34.9784732, 10.202146], [34.9792671, 10.2017658], [34.9797821, 10.2011534], [34.9805546, 10.2003931], [34.98137, 10.2001186], [34.982121, 10.1999708], [34.9829793, 10.1995273], [34.9836874, 10.1996962], [34.9839234, 10.2002875], [34.9843955, 10.2009211], [34.9849748, 10.2009844], [34.985404, 10.2005832], [34.9854898, 10.1998018], [34.9855327, 10.1992738], [34.9861121, 10.1983446], [34.9870133, 10.1977744], [34.9879789, 10.1972887], [34.9886656, 10.1965284], [34.9892664, 10.1959582], [34.989953, 10.1960638], [34.9904895, 10.1962116], [34.9912405, 10.1960849], [34.9926138, 10.1956625], [34.993236, 10.1947756], [34.9939871, 10.1936351], [34.9943304, 10.1927693], [34.9949741, 10.1920301], [34.996047, 10.1916922], [34.9970341, 10.1911008], [34.9976563, 10.1902983], [34.9983001, 10.1897492], [34.9985361, 10.18882], [34.9992013, 10.1885877], [35.0002098, 10.1887777], [35.0012612, 10.1885665], [35.0019693, 10.1881442], [35.0021195, 10.1875739], [35.0022912, 10.1868559], [35.0027418, 10.1865813], [35.0038361, 10.1865391], [35.0045013, 10.1871938], [35.0047803, 10.1882075], [35.0049305, 10.1890734], [35.005424, 10.1893268], [35.0059175, 10.1890523], [35.0063038, 10.1885665], [35.0067115, 10.1878696]]}}, {"type": "Feature", "properties": {"name": "OSM mapped unclassified road/track", "class": "osm_road", "kind": "unclassified"}, "geometry": {"type": "LineString", "coordinates": [[34.9627666, 10.223703], [34.9628548, 10.2232985], [34.9633093, 10.2220279], [34.9633972, 10.2212085], [34.9635232, 10.2207386], [34.9635538, 10.2203026], [34.9638441, 10.2194831], [34.9638937, 10.2183968], [34.963825, 10.2179457], [34.9636149, 10.2174796], [34.9633055, 10.2172878], [34.9631413, 10.2170285], [34.9630572, 10.2165962], [34.9627631, 10.2160662], [34.9623926, 10.2156339], [34.9622017, 10.2151452], [34.9620833, 10.2147204], [34.9616669, 10.2139836], [34.9614148, 10.2129386], [34.9614263, 10.2122432], [34.9613384, 10.2116568], [34.9613461, 10.2100403], [34.9613384, 10.2095479], [34.9609183, 10.2086307], [34.9607158, 10.2083863], [34.9601582, 10.2076495], [34.9598182, 10.2072097], [34.9595661, 10.2066534], [34.9594515, 10.2063414], [34.9592109, 10.2060331], [34.9589474, 10.2058677], [34.9582942, 10.2052926], [34.9577709, 10.2050783], [34.9575456, 10.2048602], [34.9574501, 10.2044693], [34.9574921, 10.2042813], [34.9573584, 10.2035295], [34.9569726, 10.2031611], [34.9567931, 10.2028002], [34.9565754, 10.2025408], [34.9562545, 10.201789], [34.9561132, 10.2016048], [34.9556587, 10.2008755], [34.9551621, 10.2003417], [34.954509, 10.1994432], [34.9537985, 10.1987478], [34.9532638, 10.198432], [34.9529086, 10.1981049], [34.9524693, 10.197744], [34.9522516, 10.197432], [34.9522669, 10.1971162], [34.9525763, 10.1963268], [34.9529315, 10.1955749], [34.9533975, 10.1950073], [34.9536916, 10.1943607], [34.9538253, 10.1941351], [34.9539704, 10.1937893], [34.9539933, 10.1931013], [34.9541652, 10.1926239], [34.9547611, 10.1916953], [34.9547191, 10.1911352], [34.9548489, 10.1906578], [34.9548604, 10.1901315], [34.9547955, 10.1895901], [34.9546541, 10.1891653], [34.954635, 10.1887743], [34.9545395, 10.1885224], [34.954085, 10.1877029], [34.9537794, 10.1868044], [34.9538673, 10.1860976], [34.9541614, 10.1856465], [34.9543715, 10.1851428], [34.9544861, 10.1847443], [34.9544631, 10.1837856], [34.9545816, 10.1833608], [34.9558649, 10.1816728], [34.9568504, 10.1801502], [34.9569803, 10.1797104], [34.9571178, 10.1793194], [34.9572094, 10.1790036], [34.9572056, 10.1784773], [34.9573088, 10.1781577], [34.959337, 10.1754734], [34.9595241, 10.1752629], [34.9599214, 10.1746388], [34.9600436, 10.1742816], [34.9604141, 10.173744], [34.9605962, 10.1731808], [34.9609618, 10.1723924], [34.961353, 10.1716957], [34.9616022, 10.1713702], [34.9616278, 10.1711066], [34.9617256, 10.1708591], [34.9617186, 10.1705543], [34.9616208, 10.1702838], [34.9616472, 10.1701846], [34.9616985, 10.1699916], [34.961681, 10.1696239], [34.961354, 10.1685838], [34.961349, 10.1682872], [34.9613543, 10.1681093], [34.9613227, 10.167541], [34.9612911, 10.1673078], [34.9612367, 10.1671213], [34.9611138, 10.1669088], [34.9610507, 10.1667257], [34.9610191, 10.165843], [34.96107, 10.16519], [34.9610998, 10.1650052], [34.961263, 10.1644991], [34.9614771, 10.1633417], [34.9615648, 10.1630014], [34.9617421, 10.1627112], [34.9619825, 10.1625022], [34.9624347, 10.1619928], [34.9627167, 10.1616906], [34.9629924, 10.160636], [34.9629798, 10.1600317], [34.9632618, 10.1590264], [34.9637693, 10.1582308], [34.9639986, 10.1580116], [34.9643758, 10.1578516], [34.9644021, 10.1577066], [34.9643582, 10.1573489], [34.9643462, 10.15628], [34.9641426, 10.155539], [34.9637917, 10.1546978], [34.9637472, 10.1535932], [34.9636334, 10.1529532], [34.9637542, 10.1521056], [34.963544, 10.1510253], [34.963337, 10.1503826], [34.9631779, 10.1500388], [34.9631179, 10.1494634], [34.962902, 10.1487853], [34.9625858, 10.1483488], [34.9619929, 10.147747], [34.9610557, 10.1467957], [34.9608651, 10.1466023], [34.9605176, 10.1460074], [34.9599611, 10.1453818], [34.9599116, 10.1451355]]}}]};
+    const map = L.map('map', { zoomControl: true }).setView([10.21743333, 34.96153333], 17);
+    const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      attribution: 'Tiles &copy; Esri'
+    }).addTo(map);
+    const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    });
+    const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      maxZoom: 17,
+      attribution: '&copy; OpenTopoMap contributors'
+    });
+    const sentinel = L.tileLayer('https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2024_3857/default/g/{z}/{y}/{x}.jpg', {
+      maxZoom: 13,
+      attribution: 'Sentinel-2 cloudless by EOX, contains modified Copernicus Sentinel data 2024'
+    });
+
+    
+    function styleFeature(feature) {
+      const cls = feature.properties.class;
+      if (cls === 'lease') return { color: '#ffe000', weight: 4, fillColor: '#ffcc00', fillOpacity: 0.10 };
+      if (cls === 'dig_first') return { color: '#ffffff', weight: 3, fillColor: '#f1b51c', fillOpacity: 0.62 };
+      if (cls === 'dig_second') return { color: '#ffffff', weight: 3, fillColor: '#f68824', fillOpacity: 0.48 };
+      if (cls === 'dig_third') return { color: '#ffffff', weight: 3, fillColor: '#ffec8f', fillOpacity: 0.42 };
+      if (cls === 'avoid') return { color: '#b73228', weight: 2, fillColor: '#b73228', fillOpacity: 0.34 };
+      if (cls === 'avoid_wet') return { color: '#7d2119', weight: 2, fillColor: '#7d2119', fillOpacity: 0.24, dashArray: '7,5' };
+      if (cls === 'stage') return { color: '#3269e6', weight: 3, fillColor: '#488cff', fillOpacity: 0.46 };
+      if (cls === 'tailings') return { color: '#533d2a', weight: 3, fillColor: '#846848', fillOpacity: 0.50 };
+      if (cls === 'drainage') return { color: '#0078ff', weight: 5, opacity: 0.95 };
+      if (cls === 'old_channel') return { color: '#00bfd7', weight: 4, opacity: 0.9, dashArray: '8,6' };
+      if (cls === 'access') return { color: '#ffffff', weight: 6, opacity: 0.95 };
+      if (cls === 'water') return { color: '#0055ff', weight: 3, opacity: 0.9, dashArray: '5,5' };
+      if (cls === 'osm_road') return { color: '#f5f0e6', weight: 2, opacity: 0.72 };
+      if (cls === 'osm_stream') return { color: '#0077c8', weight: 3, opacity: 0.75 };
+      return { color: '#333', weight: 2 };
+    }
+    
+
+    function pointToLayer(feature, latlng) {
+      const cls = feature.properties.class;
+      if (cls === 'corner') return L.circleMarker(latlng, { radius: 6, color: '#111', weight: 2, fillColor: '#23d376', fillOpacity: 1 });
+      if (cls === 'stage_point' || cls === 'water_point') return L.circleMarker(latlng, { radius: 8, color: '#fff', weight: 2, fillColor: '#3269e6', fillOpacity: 1 });
+      return L.circleMarker(latlng, { radius: 6, color: '#111', weight: 2, fillColor: '#fff', fillOpacity: 1 });
+    }
+
+    function popup(feature) {
+      const p = feature.properties;
+      return [
+        `<div class="popup-title">${p.name}</div>`,
+        p.priority ? `<div class="popup-meta">Priority: ${p.priority} | Confidence: ${p.confidence}</div>` : (p.confidence ? `<div class="popup-meta">Confidence: ${p.confidence}</div>` : ''),
+        p.coordinate ? `<p><strong>Coordinate:</strong> ${p.coordinate}</p>` : '',
+        p.why ? `<p>${p.why}</p>` : '',
+        p.field_action ? `<p class="popup-action"><strong>Field action:</strong> ${p.field_action}</p>` : ''
+      ].join('');
+    }
+
+    const layers = L.geoJSON(data, {
+      style: styleFeature,
+      pointToLayer,
+      onEachFeature: (feature, layer) => layer.bindPopup(popup(feature))
+    }).addTo(map);
+    const focus = L.geoJSON({type:'FeatureCollection', features:data.features.filter(f => !['osm_road','osm_stream'].includes(f.properties.class))});
+    map.fitBounds(focus.getBounds().pad(0.12));
+    L.control.layers(
+      { 'Satellite': satellite, 'Street map': osm, 'Topo map': topo, 'Sentinel-2 cloudless': sentinel },
+      { 'Field plan overlays': layers },
+      { collapsed: false }
+    ).addTo(map);
+
+    let locationMarker = null;
+    let accuracyCircle = null;
+    let watchId = null;
+    const locateBtn = document.getElementById('locateBtn');
+    const locateStatus = document.getElementById('locateStatus');
+
+    function setLocation(lat, lon, accuracy) {
+      const latlng = [lat, lon];
+      if (!locationMarker) {
+        locationMarker = L.circleMarker(latlng, {
+          radius: 9,
+          color: '#ffffff',
+          weight: 3,
+          fillColor: '#1769ff',
+          fillOpacity: 1
+        }).addTo(map).bindPopup('You are here');
+      } else {
+        locationMarker.setLatLng(latlng);
+      }
+      if (!accuracyCircle) {
+        accuracyCircle = L.circle(latlng, {
+          radius: accuracy || 20,
+          color: '#1769ff',
+          weight: 1,
+          fillColor: '#1769ff',
+          fillOpacity: 0.12
+        }).addTo(map);
+      } else {
+        accuracyCircle.setLatLng(latlng);
+        accuracyCircle.setRadius(accuracy || 20);
+      }
+      map.setView(latlng, Math.max(map.getZoom(), 18));
+      locateStatus.textContent = `Location on. Accuracy about ${Math.round(accuracy || 0)} m.`;
+    }
+
+    locateBtn.addEventListener('click', () => {
+      startLocationWatch();
+    });
+    function startLocationWatch() {
+      if (!navigator.geolocation) {
+        locateStatus.textContent = 'This phone/browser does not support GPS location.';
+        return;
+      }
+      if (!window.isSecureContext) {
+        locateStatus.textContent = 'GPS needs HTTPS on mobile. Host this map online or use the KML in Google Earth.';
+        return;
+      }
+      locateStatus.textContent = 'Finding your location...';
+      if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+      watchId = navigator.geolocation.watchPosition(
+        pos => setLocation(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy),
+        err => { locateStatus.textContent = `Location failed: ${err.message}`; },
+        { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 }
+      );
+    }
+    window.addEventListener('load', startLocationWatch);
+  </script>
+</body>
+</html>
